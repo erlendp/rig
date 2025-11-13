@@ -312,7 +312,7 @@ impl TryFrom<GenerateContentResponse> for completion::CompletionResponse<Generat
         let candidate = response.candidates.first().ok_or_else(|| {
             CompletionError::ResponseError("No response candidates in response".into())
         })?;
-        println!("Candidate: {:?}", candidate);
+        println!("Response: {:?}", response);
 
         let content = candidate
             .content
