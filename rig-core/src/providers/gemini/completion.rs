@@ -377,9 +377,9 @@ impl TryFrom<GenerateContentResponse> for completion::CompletionResponse<Generat
             })
             .collect::<Result<Vec<_>, _>>()?;
 
-        let choice = OneOrMany::many(content).map_err(|_| {
+        let choice = OneOrMany::many(content).map_err(|e| {
             CompletionError::ResponseError(
-                "Response contained no message or tool call (empty)".to_owned(),
+                format!("Response contained no message or tool call ({e})"),
             )
         })?;
 
