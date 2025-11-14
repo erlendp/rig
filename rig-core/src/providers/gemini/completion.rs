@@ -380,7 +380,7 @@ impl TryFrom<GenerateContentResponse> for completion::CompletionResponse<Generat
 
         let choice = OneOrMany::many(content).map_err(|e| {
             CompletionError::ResponseError(
-                format!("Response contained no message or tool call ({e})"),
+                "Response contained no message or tool call (empty)".to_owned(),
             )
         })?;
 
