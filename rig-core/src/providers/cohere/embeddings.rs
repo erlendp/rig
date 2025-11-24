@@ -1,11 +1,9 @@
-use super::{EmbeddingModels, client::ApiResponse, client::Client};
-
+use super::{client::ApiResponse, client::Client};
 use crate::{
     embeddings::{self, EmbeddingError},
     http_client::HttpClientExt,
     wasm_compat::*,
 };
-
 use serde::Deserialize;
 use serde_json::json;
 
@@ -72,17 +70,15 @@ where
     T: HttpClientExt + Clone + WasmCompatSend + WasmCompatSync + 'static,
 {
     const MAX_DOCUMENTS: usize = 96;
-    type Models = EmbeddingModels;
     type Client = Client<T>;
 
-    fn make(client: &Self::Client, model: Self::Models, dims: Option<usize>) -> Self {
-        let dims = dims.unwrap_or_else(|| model.default_dimensions());
-        Self::new(client.clone(), model, "search_document", dims)
-    }
+    fn make(client: &Self::Client, model: impl Into<String>, dims: Option<usize>) -> Self {
+        let model = model.into();
+        let dims = dims
+            .or(super::model_dimensions_from_identifier(&model))
+            .unwrap_or_default();
 
-    fn make_custom(client: &Self::Client, model: &str, dims: Option<usize>) -> Self {
-        let dims = dims.unwrap_or_default();
-        Self::with_model(client.clone(), model, "search_document", dims)
+        Self::new(client.clone(), model, "search_document", dims)
     }
 
     fn ndims(&self) -> usize {
@@ -164,10 +160,15 @@ where
 }
 
 impl<T> EmbeddingModel<T> {
-    pub fn new(client: Client<T>, model: EmbeddingModels, input_type: &str, ndims: usize) -> Self {
+    pub fn new(
+        client: Client<T>,
+        model: impl Into<String>,
+        input_type: &str,
+        ndims: usize,
+    ) -> Self {
         Self {
             client,
-            model: model.to_string(),
+            model: model.into(),
             input_type: input_type.to_string(),
             ndims,
         }
