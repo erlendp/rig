@@ -30,7 +30,6 @@ pub const GEMINI_1_0_PRO: &str = "gemini-1.0-pro";
 use self::gemini_api_types::Schema;
 use crate::http_client::HttpClientExt;
 use crate::message::{self, MimeType, Reasoning};
-use crate::models;
 use crate::providers::gemini::completion::gemini_api_types::{
     AdditionalParameters, FunctionCallingMode, ToolConfig,
 };
